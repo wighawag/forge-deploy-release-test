@@ -12,11 +12,11 @@ jobs:
       matrix:
         include:
           - target: x86_64-pc-windows-gnu
-            archive: zip tar.gz
+            archive: tar.gz
           - target: x86_64-unknown-linux-musl
-            archive: tar.gz tar.xz tar.zst
+            archive: tar.gz
           - target: x86_64-apple-darwin
-            archive: zip tar.gz
+            archive: tar.gz
     steps:
       - uses: actions/checkout@master
       - name: Compile and release
