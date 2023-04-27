@@ -53,13 +53,22 @@ jobs:
         run: |
           sudo apt-get install -y tree
           tree
+          echo ${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
 
-      - name: Upload to release
-        uses: JasonEtco/upload-to-release@v0.1.1
-        with:
-          args: forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz
+      - name: tar
+        run: tar --directory=output -cf archive.tar.gz forge-deploy${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
+      - name: upload
+        run: |
+          id=$(gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id)
+          curl --fail-with-body -sS  -X POST --data-binary @"archive.tar.gz" -H 'Content-Type: application/octet-stream' -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://uploads.github.com/repos/wighawag/forge-deploy-release-test/releases/$id/assets?name=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}.tar.gz"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload to release
+      #   uses: JasonEtco/upload-to-release@v0.1.1
+      #   with:
+      #     args: forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   windows-msvc-release:
     needs: create_release
     name: release windows msvc
