@@ -1,4 +1,5 @@
 name: Release
+# Based on https://dev.to/justin1121/releasing-rust-binaries-with-github-actions-part-2-180d
 
 on:
   release:
