@@ -28,21 +28,30 @@ jobs:
           - target: x86_64-apple-darwin
     steps:
       - uses: actions/checkout@master
-      - name: Build
+
+      #manual
+      # - run: sudo apt-get install -y gcc-mingw-w64-x86-64
+      # - name: Build
+      #   run: |
+      #     rustup target add ${{ matrix.target }}
+      #     cargo build --release --target ${{ matrix.target }}
+      # - name: tar
+      #   run: tar --directory=target/${{ matrix.target }}/release -cf forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz forge-deploy${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
+
+      # using rust-build/rust-build.action
+      - name: Compile and release
+        uses: rust-build/rust-build.action@v1.3.2
+        env:
+          UPLOAD_MODE: none
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          RUSTTARGET: ${{ matrix.target }}
+          ARCHIVE_TYPES: ${{ matrix.archive }}
+          TOOLCHAIN_VERSION: 1.64.0
         run: |
-          rustup target add ${{ matrix.target }}
-          cargo build --release --target ${{ matrix.target }}
-      - name: tar
-        run: tar --directory=target/${{ matrix.target }}/release -cf forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz forge-deploy${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
-      # - name: Compile and release
-      #   uses: rust-build/rust-build.action@v1.3.2
-      #   env:
-      #     UPLOAD_MODE: none
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     RUSTTARGET: ${{ matrix.target }}
-      #     ARCHIVE_TYPES: ${{ matrix.archive }}
-      #     TOOLCHAIN_VERSION: 1.64.0
+          sudo apt-get install -y tree
+          tree
+
       - name: Upload to release
         uses: JasonEtco/upload-to-release@v0.1.1
         with:
