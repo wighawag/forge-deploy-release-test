@@ -48,6 +48,8 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: ${{ matrix.archive }}
           TOOLCHAIN_VERSION: 1.64.0
+
+      - name: tree
         run: |
           sudo apt-get install -y tree
           tree
