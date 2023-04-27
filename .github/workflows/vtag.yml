@@ -49,14 +49,21 @@ jobs:
           ARCHIVE_TYPES: ${{ matrix.archive }}
           TOOLCHAIN_VERSION: 1.64.0
 
-      - name: tree
-        run: |
-          sudo apt-get install -y tree
-          tree
-          echo ${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
+      # - name: tree
+      #   run: |
+      #     sudo apt-get install -y tree
+      #     tree
+      #     echo ${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
 
       - name: tar
-        run: tar --directory=output -cf archive.tar.gz forge-deploy${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
+        run: |
+          export PARENT_FOLDER=output
+          export FILE_NAME=forge-deploy${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
+          export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
+          echo $FOLDER_NAME/$FILE_NAME
+          mkdir $PARENT_FOLDER/$FOLDER_NAME
+          mv $PARENT_FOLDER/$FILE_NAME $FOLDER_NAME/
+          tar --directory=$PARENT_FOLDER -cf archive.tar.gz $FOLDER_NAME
       - name: upload
         run: |
           id=$(gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id)
@@ -79,8 +86,17 @@ jobs:
       - name: Build
         run: |
           cargo build --release
+      # - name: tar
+      #   run: tar --directory=target/release -cf archive.tar.gz forge-deploy.exe
       - name: tar
-        run: tar --directory=target/release -cf archive.tar.gz forge-deploy.exe
+        run: |
+          export PARENT_FOLDER=target/release
+          export FILE_NAME=forge-deploy.exe
+          export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
+          echo $FOLDER_NAME/$FILE_NAME
+          mkdir $PARENT_FOLDER/$FOLDER_NAME
+          mv $PARENT_FOLDER/$FILE_NAME $FOLDER_NAME/
+          tar --directory=$PARENT_FOLDER -cf archive.tar.gz $FOLDER_NAME
       - name: upload
         run: |
           $id = gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id
@@ -101,8 +117,17 @@ jobs:
           rustup toolchain install stable-aarch64-apple-darwin
           rustup target add aarch64-apple-darwin
           cargo build --release --target aarch64-apple-darwin
+      # - name: tar
+      #   run: tar --directory=target/aarch64-apple-darwin/release -cf archive.tar.gz forge-deploy
       - name: tar
-        run: tar --directory=target/aarch64-apple-darwin/release -cf archive.tar.gz forge-deploy
+        run: |
+          export PARENT_FOLDER=target/aarch64-apple-darwin/release
+          export FILE_NAME=forge-deploy
+          export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
+          echo $FOLDER_NAME/$FILE_NAME
+          mkdir $PARENT_FOLDER/$FOLDER_NAME
+          mv $PARENT_FOLDER/$FILE_NAME $FOLDER_NAME/
+          tar --directory=$PARENT_FOLDER -cf archive.tar.gz $FOLDER_NAME
       - name: upload
         run: |
           id=$(gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id)
