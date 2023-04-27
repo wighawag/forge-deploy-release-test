@@ -43,7 +43,7 @@ jobs:
       - name: Upload to release
         uses: JasonEtco/upload-to-release@v0.1.1
         with:
-          args: forge-deploy_${{ github.ref_name }}_${{ matrix.target }}.${{ matrix.archive }}
+          args: forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.${{ matrix.archive }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   windows-msvc-release:
