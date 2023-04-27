@@ -90,13 +90,10 @@ jobs:
       #   run: tar --directory=target/release -cf archive.tar.gz forge-deploy.exe
       - name: tar
         run: |
-          export PARENT_FOLDER=target/release
-          export FILE_NAME=forge-deploy.exe
-          export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
-          echo $FOLDER_NAME/$FILE_NAME
-          mkdir -p archive_folder/$FOLDER_NAME
-          cp $PARENT_FOLDER/$FILE_NAME archive_folder/$FOLDER_NAME/
-          tar --directory=archive_folder -cf archive.tar.gz $FOLDER_NAME
+          mkdir archive_folder
+          mkdir archive_folder/forge-deploy_${{ github.ref_name }}_x86_64-pc-windows-msvc
+          cp target/release/forge-deploy.exe archive_folder/forge-deploy_${{ github.ref_name }}_x86_64-pc-windows-msvc/
+          tar --directory=archive_folder -cf archive.tar.gz forge-deploy_${{ github.ref_name }}_x86_64-pc-windows-msvc
       - name: upload
         run: |
           $id = gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id
@@ -123,7 +120,7 @@ jobs:
         run: |
           export PARENT_FOLDER=target/aarch64-apple-darwin/release
           export FILE_NAME=forge-deploy
-          export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
+          export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_aarch64-apple-darwin
           echo $FOLDER_NAME/$FILE_NAME
           mkdir -p archive_folder/$FOLDER_NAME
           cp $PARENT_FOLDER/$FILE_NAME archive_folder/$FOLDER_NAME/
