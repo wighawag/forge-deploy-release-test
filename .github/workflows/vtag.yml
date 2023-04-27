@@ -40,10 +40,10 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: ${{ matrix.archive }}
           TOOLCHAIN_VERSION: 1.64.0
-      - name: upload
-        run: |
-          $id = gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id
-          curl --fail-with-body -sS  -X POST --data-binary "@forge-deploy_${{ github.ref_name }}_${{ matrix.target }}.tar.gz" -H 'Content-Type: application/octet-stream' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' "https://uploads.github.com/repos/wighawag/forge-deploy-release-test/releases/$id/assets?name=forge-deploy_${{ github.ref_name }}_x86_64-pc-windows-msvc.${{ matrix.archive }}"
+      - name: Upload to release
+        uses: JasonEtco/upload-to-release@v0.1.1
+        with:
+          args: forge-deploy_${{ github.ref_name }}_${{ matrix.target }}.{{ matrix.archive }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   windows-msvc-release:
