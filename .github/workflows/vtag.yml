@@ -61,9 +61,9 @@ jobs:
           export FILE_NAME=forge-deploy${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
           export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
           echo $FOLDER_NAME/$FILE_NAME
-          mkdir $PARENT_FOLDER/$FOLDER_NAME
-          mv $PARENT_FOLDER/$FILE_NAME $FOLDER_NAME/
-          tar --directory=$PARENT_FOLDER -cf archive.tar.gz $FOLDER_NAME
+          mkdir -p archive_folder/$FOLDER_NAME
+          cp $PARENT_FOLDER/$FILE_NAME archive_folder/$FOLDER_NAME/
+          tar --directory=archive_folder -cf archive.tar.gz $FOLDER_NAME
       - name: upload
         run: |
           id=$(gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id)
@@ -94,9 +94,9 @@ jobs:
           export FILE_NAME=forge-deploy.exe
           export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
           echo $FOLDER_NAME/$FILE_NAME
-          mkdir $PARENT_FOLDER/$FOLDER_NAME
-          mv $PARENT_FOLDER/$FILE_NAME $FOLDER_NAME/
-          tar --directory=$PARENT_FOLDER -cf archive.tar.gz $FOLDER_NAME
+          mkdir -p archive_folder/$FOLDER_NAME
+          cp $PARENT_FOLDER/$FILE_NAME archive_folder/$FOLDER_NAME/
+          tar --directory=archive_folder -cf archive.tar.gz $FOLDER_NAME
       - name: upload
         run: |
           $id = gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id
@@ -125,9 +125,9 @@ jobs:
           export FILE_NAME=forge-deploy
           export FOLDER_NAME=forge-deploy_${{ github.ref_name }}_${{ matrix.target }}
           echo $FOLDER_NAME/$FILE_NAME
-          mkdir $PARENT_FOLDER/$FOLDER_NAME
-          mv $PARENT_FOLDER/$FILE_NAME $FOLDER_NAME/
-          tar --directory=$PARENT_FOLDER -cf archive.tar.gz $FOLDER_NAME
+          mkdir -p archive_folder/$FOLDER_NAME
+          cp $PARENT_FOLDER/$FILE_NAME archive_folder/$FOLDER_NAME/
+          tar --directory=archive_folder -cf archive.tar.gz $FOLDER_NAME
       - name: upload
         run: |
           id=$(gh api -H "Accept: application/vnd.github+json" /repos/wighawag/forge-deploy-release-test/releases/tags/${{ github.ref_name }} --jq .id)
