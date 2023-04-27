@@ -24,26 +24,29 @@ jobs:
       matrix:
         include:
           - target: x86_64-pc-windows-gnu
-            archive: tar.gz
           - target: x86_64-unknown-linux-musl
-            archive: tar.gz
           - target: x86_64-apple-darwin
-            archive: tar.gz
     steps:
       - uses: actions/checkout@master
-      - name: Compile and release
-        uses: rust-build/rust-build.action@v1.3.2
-        env:
-          UPLOAD_MODE: none
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          RUSTTARGET: ${{ matrix.target }}
-          ARCHIVE_TYPES: ${{ matrix.archive }}
-          TOOLCHAIN_VERSION: 1.64.0
+      - name: Build
+        run: |
+        rustup target add ${{ matrix.target }}
+          cargo build --release --target ${{ matrix.target }}
+      - name: tar
+        run: tar --directory=target/${{ matrix.target }}/release -cf forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz forge-deploy${{ matrix.target == x86_64-pc-windows-gnu && ".exe" || "" }}
+      # - name: Compile and release
+      #   uses: rust-build/rust-build.action@v1.3.2
+      #   env:
+      #     UPLOAD_MODE: none
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     RUSTTARGET: ${{ matrix.target }}
+      #     ARCHIVE_TYPES: ${{ matrix.archive }}
+      #     TOOLCHAIN_VERSION: 1.64.0
       - name: Upload to release
         uses: JasonEtco/upload-to-release@v0.1.1
         with:
-          args: target/${{ matrix.target }}/release/forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.${{ matrix.archive }}
+          args: forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   windows-msvc-release:
