@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Build
         run: |
-        rustup target add ${{ matrix.target }}
+          rustup target add ${{ matrix.target }}
           cargo build --release --target ${{ matrix.target }}
       - name: tar
         run: tar --directory=target/${{ matrix.target }}/release -cf forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz forge-deploy${{ matrix.target == x86_64-pc-windows-gnu && ".exe" || "" }}
