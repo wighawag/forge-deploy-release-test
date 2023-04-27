@@ -33,7 +33,7 @@ jobs:
           rustup target add ${{ matrix.target }}
           cargo build --release --target ${{ matrix.target }}
       - name: tar
-        run: tar --directory=target/${{ matrix.target }}/release -cf forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz forge-deploy${{ matrix.target == x86_64-pc-windows-gnu && ".exe" || "" }}
+        run: tar --directory=target/${{ matrix.target }}/release -cf forge-deploy-release-test_${{ github.ref_name }}_${{ matrix.target }}.tar.gz forge-deploy${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
       # - name: Compile and release
       #   uses: rust-build/rust-build.action@v1.3.2
       #   env:
